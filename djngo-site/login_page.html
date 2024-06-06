@@ -1,0 +1,79 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+
+
+
+<section id="contact" class="contact mb-5">
+  <div class="container" data-aos="fade-up" style="padding: 30px;">
+
+    <div class="row">
+      <div class="col-lg-12 text-center mb-5">
+        <h1 class="page-title">Login</h1>
+      </div>
+    </div>
+    <div class="form mt-3" style="margin: 0 auto; max-width: 400px;">
+      <p id="msg" style="color:red;"></p>
+      <form method="POST" id="frmlogin" action="" role="form" class="php-email-form">
+        {% csrf_token %}
+        <div >
+
+
+          <div class="form-group ">
+            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" maxlength="50" required>
+          </div>
+
+          <div class="form-group ">
+            <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" maxlength="50" required>
+          </div>
+
+        </div>
+
+        <h6 class="landing4-heading">
+              &nbsp; <a href="{% url 'forget_password' %}">Forget Password ?</a>
+            </h6>
+
+        <div class="text-center"><button type="submit" id="id_submit" >Login</button></div>
+      </form>
+    </div><!-- End Contact Form -->
+
+  </div>
+</section>
+
+
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+  integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+
+<script>
+  $(document).on("submit", "#frmlogin", function (e) {
+    e.preventDefault();
+    var email = $("#email").val();
+    var password = $("#password").val();
+    $.ajax({
+      type: "POST",
+      url: "{% url 'userlogin' %}",
+      data: {
+        email: email,
+        password: password,
+        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+      },
+      success: function (response) {
+        if (response.status == "User Login Success") {
+          window.location.href = "/home_page/";
+        }
+        if (response.status == "Invaild Password") {
+          document.getElementById("msg").style.color = "red";
+          document.getElementById("msg").textContent =
+            "Invaild Login User Or Password";
+        }
+      },
+    });
+  });
+</script>
+
+{% endblock %}

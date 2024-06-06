@@ -1,0 +1,82 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+{% if user.is_authenticated %}
+
+
+
+<div class="container my-5" style="margin-top: 9rem !important">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+          <p id="msg" style="color:red;"></p>
+        <div class="card-body">
+          <h4 class="card-title  text-center mb-4">My Account</h4>
+          <form method="POST" id="frm_myprofile" action="{% url 'myprofile' %}" class="form-horizontal">
+            {% csrf_token %}
+            <div class="form-group row">
+              <label for="user_first_name" class="col-sm-3 col-form-label">First Name:</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="user_first_name" name="user_first_name" value="{{ user.first_name }}" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="user_last_name" class="col-sm-3 col-form-label">Last Name:</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="user_last_name" name="user_last_name" value="{{ user.last_name }}" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="user_contact_number" class="col-sm-3 col-form-label">Contact Number:</label>
+              <div class="col-sm-9">
+                <input type="number" class="form-control" id="user_contact_number" name="user_contact_number" value="{{ user_profile2.contact_number }}" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="user_email" class="col-sm-3 col-form-label">Email:</label>
+              <div class="col-sm-9">
+                <input type="email" class="form-control" id="user_email" name="user_email" value="{{ user.email }}" readonly>
+              </div>
+            </div>
+            <div class="form-group row justify-content-center mt-4">
+              <div class="col-sm-6">
+                <button class="btn btn-primary btn-block" type="submit">Save Changes</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    
+   
+        {% else %}
+        <meta http-equiv="REFRESH" content="0;url={% url 'userlogin' %}">
+        {% endif %}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script>
+		$(document).on('submit','#frm_myprofile',function(e){
+		var phoneno = /^\d{10}$/;
+    var contact_number = $('#user_contact_number').val();
+    if (contact_number.length == 10)
+          {
+        return true;
+          }
+        else
+          {
+          document.getElementById("msg").style.color = "red";
+          document.getElementById("msg").textContent="Phone Number Must Be 10 digit";
+          return false;
+          }
+      
+      
+        })
+    </script>
+
+    {% endblock %}

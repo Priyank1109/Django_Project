@@ -1,0 +1,156 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block content %}
+
+
+<section id="contact" class="contact mb-5">
+  <div class="container" data-aos="fade-up">
+
+    <div class="row">
+      <div class="col-lg-12 text-center mb-5">
+        <h1 class="page-title">Register</h1>
+      </div>
+    </div>
+    <div class="form mt-5">
+      <p id="msg" style="color:red;"></p>
+      <form method="POST" id="postform" action="" role="form" class="php-email-form">
+        {% csrf_token %}
+        <div class="row">
+          <div class="form-group col-md-6">
+            <input type="text" class="form-control" id="first_name" placeholder="First Name" name="first_name"  maxlength="50" required>
+          </div>
+          <div class="form-group col-md-6">
+            <input type="text" class="form-control" id="last_name" placeholder="Last Name" name="last_name" maxlength="50" required>
+          </div>
+          <div class="form-group col-md-6">
+            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" maxlength="50" required>
+          </div>
+          <div class="form-group col-md-6">
+            <input type="number" class="form-control" id="contact_number" placeholder="Contact Number" name="contact_number" maxlength="10" required>
+          </div>
+          <div class="form-group col-md-6">
+            <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" maxlength="50" required>
+          </div>
+          <div class="form-group col-md-6">
+            <input type="password" class="form-control" id="confirm_password" placeholder="Enter password" name="confirm_password" required>
+          </div>
+        </div>
+        
+        <div class="text-center"><button type="submit" id="id_submit" >Register</button></div>
+      </form>
+    </div><!-- End Contact Form -->
+
+  </div>
+</section>
+
+  <script>
+    function validatePhoneNumber() {
+        var phoneNumber = document.getElementById("contact_number").value;
+        var phoneValidationMessage = document.getElementById("phoneValidationMessage");
+        // Use a regular expression to validate the phone number
+        var regex = /^[0-9]{10}$/; // 10 digits only
+        if (!regex.test(phoneNumber)) {
+            phoneValidationMessage.textContent = "Please enter a valid 10-digit phone number.";
+        } else {
+            phoneValidationMessage.textContent = ""; // Clear the error message
+        }
+    }
+    </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    $(document).on('submit','#postform',function(e){
+      e.preventDefault();
+      var first_name= $('#first_name').val();
+      var last_name= $('#last_name').val();
+      var contact_number= $('#contact_number').val();
+      var email = $('#email').val();
+      var password = $('#password').val();
+      var confirm_password = $('#confirm_password').val();
+      //document.getElementById("msg").style.color = "orange";
+      //document.getElementById("msg").textContent="Please wait";
+      if (validate()){
+
+        $.ajax({
+            type: 'POST',
+            url : "{% url 'signup' %}",
+            data:{
+                'first_name' : first_name,
+                'last_name' : last_name,
+                'contact_number' : contact_number,
+                'email':email,
+                'password':password,
+                'confirm_password':confirm_password,
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+            },
+            success:function(response){
+                console.log(response)
+                if(response.status=="User Registration Success"){
+                    document.getElementById("msg").style.color = "green";
+                    document.getElementById("msg").textContent="Registration Successful And Check Email For Verification";
+                    document.getElementById("first_name").value = "";
+                    document.getElementById("last_name").value = "";
+                    document.getElementById("contact_number").value = "";
+                    document.getElementById("email").value = "";
+                    document.getElementById("password").value = "";
+                    document.getElementById("confirm_password").value = "";
+                }
+                if(response.status=="Email is Already Registered"){
+                document.getElementById("msg").style.color = "red";
+                document.getElementById("msg").textContent="Email is Already Registered";
+                }
+                if(response.status=="Incorrect Password"){
+                    document.getElementById("msg").style.color = "red";
+                    document.getElementById("msg").textContent="Password must have 6 or capital,small,number,speical char";
+                }
+                if(response.status=="Password Doesn't Match"){
+                    document.getElementById("msg").style.color = "red";
+                    document.getElementById("msg").textContent="Password And Confirm Password do not match";
+                }
+                if(response.status=="Registration Fail"){
+                    document.getElementById("msg").style.color = "red";
+                    document.getElementById("msg").textContent="Registration Fail";
+                }
+
+            }
+            })
+        }
+    })
+
+    function validate(){
+
+      let strongPassword = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+      var mobileRegex = /^[0-9]{10}$/; // 10 digits only
+      var isValid = true;
+
+      if (!$('#first_name').val()){ 
+        isValid = false 
+        $("#msg").css("color", "red"); 
+        $("#msg").text("Please insert first name"); 
+      }
+      else if(!$('#last_name').val()){ 
+        isValid = false 
+        $("#msg").css("color", "red"); 
+        $("#msg").text("Please insert last name");
+      }
+      else if(!$('#contact_number').val()){
+        isValid = false
+        $("#msg").css("color", "red"); 
+        $("#msg").text("Please insert Contact name");
+
+      }
+      else if(!mobileRegex.test($('#contact_number').val())) {
+        isValid = false
+        $("#msg").css("color", "red"); 
+        $("#msg").text("Please insert valid phone number");
+      }
+
+      return isValid;
+    }
+</script>
+
+<script type="text/javascript">
+
+</script>
+
+{% endblock %}
